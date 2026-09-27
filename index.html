@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Practice Test 10</title>
+<style>
+  :root {
+    --ink: #1b2a41;
+    --ink-soft: #55627a;
+    --line: #d8dde6;
+    --paper: #ffffff;
+    --field: #f3f5f8;
+    --pitch: #2e7d4f;
+    --pitch-deep: #23603c;
+    --correct: #1e8e5a;
+    --wrong: #c43d3d;
+    --correct-bg: #e6f5ec;
+    --wrong-bg: #fbe9e9;
+    --amber: #b8860b;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--field); color: var(--ink);
+    font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif; font-size: 17px; line-height: 1.5; }
+
+  header {
+    background: var(--ink); color: #fff; position: sticky; top: 0; z-index: 5;
+  }
+  .bar { max-width: 960px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; gap: 20px; }
+  .bar .title { font-weight: 600; }
+  .bar .section-name { color: #c6d0e0; }
+  .bar .spacer { flex: 1; }
+
+  main { max-width: 960px; margin: 28px auto 80px; padding: 0 24px; }
+  .sheet { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 32px 40px; }
+  h1 { font-size: 28px; margin: 0 0 6px; font-weight: 700; }
+  h2 { font-size: 22px; margin: 0 0 16px; font-weight: 700; }
+  p.lead { color: var(--ink-soft); margin: 0 0 20px; }
+
+  .instructions ol { padding-left: 22px; }
+  .instructions li { margin-bottom: 6px; }
+  .plan { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 22px 0 28px; }
+  .plan div { border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+  .plan strong { display: block; margin-bottom: 4px; }
+  .plan span { color: var(--ink-soft); font-size: 15px; }
+
+  button.primary {
+    background: var(--pitch); color: #fff; border: 0; border-radius: 6px; font-size: 17px; font-weight: 600;
+    padding: 12px 26px; cursor: pointer; font-family: inherit;
+  }
+  button.primary:hover { background: var(--pitch-deep); }
+  button.primary:focus-visible, .option:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+
+  /* passage + questions */
+  .two-col { display: grid; grid-template-columns: 5fr 6fr; gap: 40px; align-items: start; }
+  .passage { position: sticky; top: 76px; }
+  .passage-note { margin: 0 0 14px; font-style: italic; color: var(--ink-soft); }
+
+  .question { margin-bottom: 32px; padding-bottom: 28px; border-bottom: 1px solid var(--line); }
+  .question:last-of-type { border-bottom: 0; }
+  .qhead { display: flex; gap: 12px; align-items: baseline; margin-bottom: 12px; }
+  .qnum { font-weight: 700; min-width: 26px; }
+  .stem { margin: 0; }
+  .stem em.speaker { font-style: normal; font-weight: 600; }
+  .stem .facts { margin: 8px 0 0 0; padding-left: 20px; }
+  .stem .facts li { margin: 2px 0; }
+  .stem .quote { margin: 10px 0 0 0; padding: 10px 14px; background: var(--field); border-left: 3px solid var(--line); border-radius: 0 4px 4px 0; }
+  .options { display: grid; gap: 8px; margin: 14px 0 0 38px; }
+  .option {
+    display: flex; gap: 14px; align-items: flex-start; text-align: left; width: 100%;
+    background: var(--paper); border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px;
+    cursor: pointer; font: inherit; color: inherit;
+  }
+  .option:hover { border-color: var(--ink-soft); }
+  .option .letter { flex: 0 0 28px; height: 28px; border-radius: 50%; border: 2px solid var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+  .option.selected { border-color: var(--ink); background: #eef2f8; }
+  .option.selected .letter { background: var(--ink); color: #fff; }
+
+  .submit-row { display: flex; align-items: center; gap: 16px; margin-top: 8px; }
+  .submit-row .status { color: var(--ink-soft); font-size: 15px; }
+
+
+  /* prose passage */
+  .prose { font-family: Georgia, "Times New Roman", serif; font-size: 17px; line-height: 1.6; }
+  .prose h3 { font-family: inherit; font-size: 22px; margin: 0 0 14px; font-weight: 700; }
+  .prose p { margin: 0 0 12px; }
+  .passage { max-height: calc(100vh - 100px); overflow-y: auto; padding-right: 8px; }
+
+
+  /* poem passage */
+  .poem { font-size: 17px; line-height: 1.6; }
+  .poem .stanza { margin: 0 0 18px; position: relative; padding-left: 32px; }
+  .poem .stanza .vn { position: absolute; left: 0; top: 1px; font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 13px; color: var(--ink-soft); }
+  .poem .stanza .line { display: block; }
+
+
+
+  /* letter-only options and shared option lists */
+  .options.letters { grid-template-columns: repeat(5, 54px); gap: 10px; }
+  .options.letters .option { justify-content: center; padding: 9px; }
+  .choice-list { border: 1px solid var(--line); border-radius: 6px; padding: 14px 18px; margin: 0 0 26px; }
+  .choice-list ol { list-style: none; margin: 0; padding: 0; }
+  .choice-list li { display: flex; gap: 12px; margin-bottom: 8px; }
+  .choice-list li:last-child { margin-bottom: 0; }
+  .choice-list .letter { flex: 0 0 26px; height: 26px; border-radius: 50%; border: 2px solid var(--ink);
+    display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; }
+
+
+  /* multi-extract passage */
+  .extract { margin: 0 0 16px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 6px; }
+  .extract h4 { font-family: "Segoe UI", Arial, sans-serif; font-size: 14px; margin: 0 0 6px; letter-spacing: .02em; }
+  .extract p { margin: 0; font-size: 16px; line-height: 1.55; }
+  .options.letters.four { grid-template-columns: repeat(4, 54px); }
+
+  /* cloze gaps */
+  .gap { color: var(--ink-soft); }
+  .gap.filled { color: var(--ink); font-weight: 600; background: #eef2f8; box-shadow: inset 0 -2px 0 var(--pitch); }
+  .gap.filled.correct { color: var(--correct); background: var(--correct-bg); box-shadow: inset 0 -2px 0 var(--correct); }
+
+  /* data tables inside stems */
+  table.grid { border-collapse: collapse; margin: 10px 0 0; font-size: 16px; }
+  table.grid th, table.grid td { border: 1px solid var(--ink); padding: 5px 14px; text-align: left; }
+  table.grid th { background: var(--field); font-weight: 600; }
+
+  /* visual (picture) options */
+  .options.visual { grid-template-columns: repeat(auto-fit, minmax(0, max-content)); gap: 14px; }
+  .options.visual .option { flex-direction: column; align-items: center; gap: 8px; padding: 10px; }
+  .options.visual .option .letter { flex: none; width: 28px; height: 28px; }
+  .options.visual .option svg { display: block; }
+  @media (max-width: 760px) { .options.visual { grid-template-columns: repeat(2, max-content); } }
+
+
+  /* v7 additions */
+  .stem .note { margin: 0 0 8px; font-style: italic; color: var(--ink-soft); font-size: 15px; }
+  .stem ol.statements { margin: 10px 0 0; padding-left: 26px; }
+  .stem ol.statements li { margin: 4px 0; padding-left: 4px; }
+  .figure { margin: 12px 0; }
+  .figure svg { display: block; max-width: 100%; height: auto; }
+  .option svg { display: block; max-width: 100%; height: auto; }
+  .option:has(svg) { align-items: center; }
+  .digit-cards { display: flex; gap: 22px; flex-wrap: wrap; margin: 12px 0 14px; }
+  .digit-card { width: 80px; height: 106px; border: 1.5px solid var(--ink); border-radius: 10px; background: #fdf3e1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .digit-card span { font-size: 56px; font-weight: 700; line-height: 1; }
+  .digit-card small { font-size: 12px; margin-top: 6px; letter-spacing: .03em; }
+  .table-wrap { overflow-x: auto; max-width: 100%; }
+  @media (max-width: 760px) { table.grid th, table.grid td { padding: 4px 8px; font-size: 14px; } }
+  .poem .stanza .line { padding-left: 1.2em; text-indent: -1.2em; }
+  .tags { display: flex; gap: 16px; flex-wrap: wrap; margin: 12px 0 14px; }
+  .tag { border: 1.5px solid var(--ink); border-radius: 8px 22px 22px 8px; padding: 8px 22px 8px 14px; background: #fdf3e1;
+    display: flex; flex-direction: column; min-width: 96px; }
+  .tag small { font-size: 13px; color: var(--ink-soft); }
+  .tag span { font-size: 22px; font-weight: 700; }
+  .timer { font-variant-numeric: tabular-nums; font-size: 20px; font-weight: 600;
+    padding: 4px 14px; border-radius: 6px; background: rgba(255,255,255,.12); min-width: 88px; text-align: center; }
+  .timer.low { background: var(--wrong); }
+  .timer.hidden { visibility: hidden; }
+  .start-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+  button.secondary { background: #fff; color: var(--pitch-deep); border: 2px solid var(--pitch); border-radius: 6px;
+    font-size: 17px; font-weight: 600; padding: 10px 24px; cursor: pointer; font-family: inherit; }
+  button.secondary:hover { background: var(--correct-bg); }
+  button.secondary:focus-visible { outline: 3px solid var(--amber); outline-offset: 2px; }
+  .puzzle { display: grid; grid-template-columns: repeat(5, 46px); grid-auto-rows: 46px; gap: 2px; }
+  .pz-box { border: 2px solid var(--ink); border-radius: 4px; display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 700; background: #fff; }
+  .pz-op { display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; }
+  .pz-star { color: #b8860b; font-size: 24px; }
+  .options.visual .option svg { max-width: none; }
+  .explain .skill { margin: 0 0 8px; font-size: 14px; font-weight: 600; color: var(--ink-soft); }
+
+  /* review */
+  .result-line { display: flex; gap: 10px; align-items: center; font-weight: 600; margin-bottom: 10px; }
+  .badge { padding: 2px 10px; border-radius: 4px; font-size: 14px; }
+  .badge.ok { background: var(--correct-bg); color: var(--correct); }
+  .badge.no { background: var(--wrong-bg); color: var(--wrong); }
+  .option.is-correct { border-color: var(--correct); background: var(--correct-bg); }
+  .option.is-correct .letter { border-color: var(--correct); background: var(--correct); color: #fff; }
+  .option.is-wrong { border-color: var(--wrong); background: var(--wrong-bg); }
+  .option.is-wrong .letter { border-color: var(--wrong); background: var(--wrong); color: #fff; }
+  .option[disabled] { cursor: default; }
+  .explain { margin: 14px 0 0 38px; padding: 14px 16px; background: var(--field); border-radius: 6px; font-size: 16px; }
+  .explain p { margin: 0 0 8px; }
+  .explain p:last-child { margin: 0; }
+  .explain .why-not { color: var(--ink-soft); }
+
+  .section-score { font-size: 18px; margin: 0 0 24px; }
+  .section-score b { font-size: 26px; }
+
+  /* final */
+  .final-score { text-align: center; padding: 20px 0 10px; }
+  .final-score .big { font-size: 64px; font-weight: 700; line-height: 1; }
+  .final-score .of { color: var(--ink-soft); font-size: 20px; }
+  .breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 26px 0 30px; }
+  .breakdown div { border: 1px solid var(--line); border-radius: 6px; padding: 14px 16px; }
+  .breakdown strong { display: block; font-size: 24px; }
+  .breakdown span { color: var(--ink-soft); font-size: 15px; }
+  .verdict { margin: 0 0 24px; }
+  .center { text-align: center; }
+
+  @media (max-width: 760px) {
+    .two-col { grid-template-columns: 1fr; }
+    .passage { position: static; }
+    .plan, .breakdown { grid-template-columns: 1fr; }
+    .sheet { padding: 22px; }
+    .options, .explain { margin-left: 0; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .option { transition: background .12s, border-color .12s; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <span class="title">Practice Test 10</span>
+    <span class="section-name" id="hdr-section"></span>
+    <span class="spacer"></span>
+    <span class="timer hidden" id="timer">0:00</span>
+  </div>
+</header>
+<main id="app"></main>
+
+<script>
+/* ---------------------------------------------------------------
+   TEST CONTENT — Practice Test 10
+   Each section: name, timeSeconds, optional passage, questions[].
+   --------------------------------------------------------------- */
+
+let passMode = "answer";
+const INK = "#1b2a41";
+
+/* ---- Reading: literary extract ---- */
+const PASSAGE = {
+  title: "The Keeper’s Daughter",
+  note: "Read the extract below, then answer the questions.",
+  html: `
+<p>By the time the storm reached Cape Morrow, Bea had been keeping the lamp alone for two days. Her father lay in the room below with his leg bound between two lengths of driftwood, calling instructions up through the floorboards in a voice that grew hoarser by the hour. “Trim the wick. Wind the clockwork. Wipe the glass — no, the inside, Bea, the salt gets in there too.” She did not answer him. There was no breath to spare for it, and besides, she had done every one of those things before he thought to say them.</p>
+<p>The lamp itself was a thing her mother had called “the Duchess”, partly because of its size and partly because it expected to be waited on. It stood as tall as a man inside its cage of glass prisms, and every four hours it had to be fed with oil carried up ninety-one iron steps. Bea had counted them on the first night. On the second she stopped counting, because the number did not change and her legs did.</p>
+<p>Towards midnight the wind swung round to the south-east and began to find the gaps in the gallery windows. A pane cracked. Bea stuffed her father’s oilskin coat into the gap and held it there with her shoulder, and for a long while that was all there was in the world: the roar outside, the coat, and the patient turning of the light.</p>
+<p>It was then that she saw the ship.</p>
+<p>It was very small, or very far away — she could not at first tell which — a single lantern lifting and dropping in the black. It was far too close to the reef. Bea knew the reef the way she knew the steps; she had watched it at low tide every day of her life, a grey spine of rock that the sea stroked gently in summer and tore at in winter. The lantern swung south, towards it.</p>
+<p>Bea did the only thing the Duchess allowed. She could not make the light brighter, and she could not send it anywhere it had not been sent a thousand times before. But she could make certain that it did not <b>falter</b>. She wound the clockwork before it needed winding. She trimmed the wick until the flame stood as straight as a pencil. And she stayed at the glass with her hand pressed flat against it, as if the ship might somehow feel the warmth of her palm.</p>
+<p>At a little after two, the lantern turned. Slowly — so slowly that at first she thought she had imagined it — it swung away to the east, past the end of the reef and out into open water.</p>
+<p>Bea did not cheer. She went down the ninety-one steps, filled the oil can, and came back up again.</p>`
+};
+
+/* ---- Thinking Skills Q1: folding a clear sheet ---- */
+const seg = (x1, y1, x2, y2, w = 3) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${INK}" stroke-width="${w}" stroke-linecap="round"/>`;
+const SHEET_SVG = `<svg viewBox="-34 -8 188 136" width="188" height="136" role="img" aria-label="A square clear sheet with lines drawn on it and a fold line PQ across the middle">
+  <rect x="0" y="0" width="120" height="120" fill="#eef5fb" stroke="${INK}" stroke-width="2.5"/>
+  ${seg(0, 0, 60, 60)}${seg(90, 0, 90, 60)}${seg(60, 60, 120, 120)}${seg(0, 90, 30, 90)}
+  <line x1="-8" y1="60" x2="128" y2="60" stroke="#c43d3d" stroke-width="2" stroke-dasharray="6 4"/>
+  <text x="-16" y="66" font-size="16" font-weight="700" text-anchor="middle" fill="${INK}">P</text>
+  <text x="138" y="66" font-size="16" font-weight="700" text-anchor="middle" fill="${INK}">Q</text>
+</svg>`;
+// each option is drawn in sheet coordinates for the bottom half (y from 60 to 120)
+const foldOpt = (lines) => `<svg viewBox="-6 54 132 72" width="132" height="72">
+  <rect x="0" y="60" width="120" height="60" fill="#dfe9f3" stroke="${INK}" stroke-width="2.5"/>
+  ${lines.map(l => seg(...l)).join("")}</svg>`;
+const FOLD_BASE = [[60, 60, 120, 120], [0, 90, 30, 90]];            // lines already on the bottom half
+const FOLD_OPTS = [
+  foldOpt([...FOLD_BASE, [0, 120, 60, 60], [30, 60, 30, 120]]),      // A: vertical line on the wrong side
+  foldOpt([...FOLD_BASE, [0, 60, 60, 120], [90, 60, 90, 120]]),      // B: top half slid down, not flipped
+  foldOpt([...FOLD_BASE, [0, 120, 60, 60], [90, 60, 90, 120]]),      // C: correct
+  foldOpt([...FOLD_BASE, [30, 60, 30, 120]])                         // D: top half turned right round
+];
+
+/* ---- Thinking Skills Q2: odd one out ---- */
+const OOO_FACE = `
+  <path d="M-40 0 A20 20 0 0 0 -40 40 Z" fill="#fff" stroke="${INK}" stroke-width="2.5"/>
+  <rect x="-40" y="-40" width="40" height="40" fill="#b77b6e"/>
+  <rect x="-40" y="-40" width="80" height="80" fill="none" stroke="${INK}" stroke-width="2.5"/>
+  <line x1="0" y1="-40" x2="0" y2="40" stroke="${INK}" stroke-width="2"/>
+  <line x1="-40" y1="0" x2="40" y2="0" stroke="${INK}" stroke-width="2"/>
+  <circle cx="20" cy="-20" r="7" fill="${INK}"/>
+  <line x1="0" y1="0" x2="40" y2="40" stroke="${INK}" stroke-width="2"/>`;
+const oooOpt = (transform) => `<svg viewBox="-66 -66 132 132" width="104" height="104"><g transform="${transform}">${OOO_FACE}</g></svg>`;
+
+/* ---- Maths Q1: number-sentence puzzle ---- */
+const PUZZLE = (() => {
+  const L = [
+    ["6", "×", "", "=", "24"],
+    ["+", "", "×", "", ""],
+    ["", "−", "", "=", "4"],
+    ["=", "", "=", "", ""],
+    ["★", "", "20", "", ""]
+  ];
+  let cells = "";
+  L.forEach((row, r) => row.forEach((v, c) => {
+    const box = (r % 2 === 0 && c % 2 === 0) && (v !== "" || (r <= 2 && c <= 2));
+    const show = box || v !== "";
+    cells += `<div class="${box ? "pz-box" : "pz-op"}${v === "★" ? " pz-star" : ""}">${show ? v : ""}</div>`;
+  }));
+  return `<div class="puzzle" role="img" aria-label="A number puzzle: 6 times blank equals 24; blank minus blank equals 4; down the first column, 6 plus blank equals star; down the middle column, blank times blank equals 20">${cells}</div>`;
+})();
+
+/* ---- Maths Q2: repeating pattern with spilled paint ---- */
+const SHAPE = {
+  circle: (x, y) => `<circle cx="${x}" cy="${y}" r="12" fill="#8fb3d9" stroke="${INK}" stroke-width="2"/>`,
+  triangle: (x, y) => `<polygon points="${x},${y - 13} ${x + 13},${y + 11} ${x - 13},${y + 11}" fill="#f2c14e" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/>`,
+  square: (x, y) => `<rect x="${x - 11}" y="${y - 11}" width="22" height="22" fill="#a8cfa3" stroke="${INK}" stroke-width="2"/>`,
+  star: (x, y) => `<polygon points="${Array.from({ length: 10 }, (_, k) => { const a = -Math.PI / 2 + k * Math.PI / 5, r = k % 2 ? 5.5 : 14; return `${(x + r * Math.cos(a)).toFixed(1)},${(y + 1 + r * Math.sin(a)).toFixed(1)}`; }).join(" ")}" fill="#d9a3c7" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/>`,
+  heart: (x, y) => `<path d="M${x} ${y + 12} C${x - 17} ${y + 1} ${x - 12} ${y - 16} ${x} ${y - 7} C${x + 12} ${y - 16} ${x + 17} ${y + 1} ${x} ${y + 12} Z" fill="#e58f8f" stroke="${INK}" stroke-width="2" stroke-linejoin="round"/>`
+};
+const ORDER = ["circle", "triangle", "square", "star", "heart"];
+const PATTERN_SVG = (() => {
+  const u = 44, ox = 30, oy = 26, cols = "ABCDEF";
+  let g = "";
+  for (let c = 0; c < 6; c++) g += `<text x="${ox + c * u + u / 2}" y="${oy - 9}" font-size="14" font-weight="700" text-anchor="middle" fill="${INK}">${cols[c]}</text>`;
+  for (let r = 0; r < 4; r++) g += `<text x="${ox - 13}" y="${oy + r * u + u / 2 + 5}" font-size="14" font-weight="700" text-anchor="middle" fill="${INK}">${r + 1}</text>`;
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 6; c++) {
+    g += `<rect x="${ox + c * u}" y="${oy + r * u}" width="${u}" height="${u}" fill="#fff" stroke="#9aa7bb" stroke-width="1"/>`;
+    g += SHAPE[ORDER[(r * 6 + c) % 5]](ox + c * u + u / 2, oy + r * u + u / 2);
+  }
+  const x0 = ox + 2 * u, y0 = oy + 2 * u;
+  const blob = `<path d="M${x0 + 4} ${y0 + 6} C${x0 + 30} ${y0 - 14} ${x0 + 70} ${y0 + 8} ${x0 + 104} ${y0 - 6} C${x0 + 140} ${y0 - 18} ${x0 + 184} ${y0 - 4} ${x0 + 180} ${y0 + 30}
+    C${x0 + 178} ${y0 + 62} ${x0 + 186} ${y0 + 80} ${x0 + 166} ${y0 + 92} C${x0 + 120} ${y0 + 104} ${x0 + 80} ${y0 + 86} ${x0 + 40} ${y0 + 96}
+    C${x0 + 12} ${y0 + 102} ${x0 - 2} ${y0 + 80} ${x0 + 6} ${y0 + 54} C${x0 + 12} ${y0 + 36} ${x0 - 6} ${y0 + 22} ${x0 + 4} ${y0 + 6} Z" fill="#5b8c85" stroke="#3f6b65" stroke-width="2"/>`;
+  return `<svg viewBox="0 0 ${ox + 6 * u + 12} ${oy + 4 * u + 12}" width="${ox + 6 * u + 12}" height="${oy + 4 * u + 12}" role="img" aria-label="A grid with columns A to F and rows 1 to 4 filled with circles, triangles, squares, stars and hearts. Paint covers columns C to F in rows 3 and 4.">${g}${blob}</svg>`;
+})();
+const shapeOpt = (name) => `<svg viewBox="0 0 40 40" width="40" height="40">${SHAPE[name](20, 20)}</svg>`;
+
+const SECTIONS = [
+  {
+    id: "reading",
+    name: "Reading",
+    timeSeconds: 5 * 60,
+    passage: PASSAGE,
+    intro: "Read the extract, then choose the option (A, B, C or D) which you think best answers each question.",
+    questions: [
+      {
+        stem: "The word <b>falter</b> tells us that Bea wanted to make sure the light did not",
+        options: ["waver or weaken, even for a moment.",
+                  "swing round towards the ship.",
+                  "use up all of its oil too quickly.",
+                  "shine so brightly it dazzled sailors."],
+        answer: 0,
+        skill: "working out a word’s meaning from the text around it",
+        explain: `<p>Look at what Bea does straight after the word. She winds the clockwork early so the light keeps turning, and trims the wick until the flame stands “as straight as a pencil”. Everything she does is about keeping the light steady and strong, so <em>falter</em> must mean to waver or weaken.</p>
+                  <p class="why-not">C is the trap. Bea does carry oil to the lamp, so running out sounds right, but nothing in this paragraph is about oil. B can’t be right, because she “could not send it anywhere it had not been sent a thousand times before”. D is the opposite of her worry.</p>`
+      },
+      {
+        stem: "Bea stopped counting the steps on the second night “because the number did not change and her legs did”. This suggests that",
+        options: ["she had forgotten how many steps there were.",
+                  "each climb was becoming harder for her.",
+                  "she no longer needed to climb the tower.",
+                  "she had started to enjoy the long climb."],
+        answer: 1,
+        skill: "explaining what a phrase suggests",
+        explain: `<p>The number of steps stayed at ninety-one, but her legs changed: they were getting more and more tired. Counting was pointless because the only thing that was different each time was how hard the climb felt.</p>
+                  <p class="why-not">A is the trap. She stopped counting, but she hadn’t forgotten: the writer keeps telling us there are ninety-one steps, and she climbs them again at the end. C is contradicted by the last paragraph, and nothing suggests she enjoyed the climb (D).</p>`
+      },
+      {
+        stem: `<p class="note">For this question, you will need to refer back to the whole text.</p>What does the final paragraph suggest about Bea?`,
+        options: ["She is disappointed that nobody saw what she did.",
+                  "She is too tired to feel pleased about the ship.",
+                  "She sees keeping the light going as her duty.",
+                  "She fears that the ship will turn back again."],
+        answer: 2,
+        skill: "interpreting an ending in the light of the whole text",
+        explain: `<p>Instead of celebrating, Bea goes straight back to work: down ninety-one steps, fill the oil can, and up again. That matches everything earlier in the extract. She does her father’s jobs before he asks, and she keeps the light steady because it is the one thing she can do. To her, the light is a job that never stops, not a victory.</p>
+                  <p class="why-not">B is the trap. Bea is certainly tired, but someone too tired to feel anything would not immediately climb ninety-one steps again. Nothing suggests she wanted to be seen (A), and the ship has gone “out into open water”, so there is no sign she fears its return (D).</p>`
+      }
+    ]
+  },
+  {
+    id: "thinking",
+    name: "Thinking Skills",
+    timeSeconds: 3 * 60,
+    intro: "Choose the one correct answer (A, B, C or D).",
+    questions: [
+      {
+        stem: `A square sheet of clear plastic has a pattern of lines on it. The top half of the sheet is folded down along the line PQ, so that it lies exactly on top of the bottom half.
+               <div class="figure">${SHEET_SVG}</div>
+               <p style="margin:0">Which option shows how the pattern looks after the sheet is folded?</p>`,
+        visualOptions: true,
+        options: FOLD_OPTS,
+        answer: 2,
+        skill: "picturing a fold as a reflection",
+        explain: `<p>Folding along PQ flips the top half over, like a reflection in the line PQ. Each line stays the same distance from the left and right edges, but what was near the top edge ends up near the bottom edge. So the diagonal that ran from the top-left corner down to the middle of PQ now runs from the bottom-left corner up to the middle of PQ, making a peak with the diagonal already on the bottom half. The short upright line stays on the right. Because the sheet is clear, all four lines show.</p>
+                  <p class="why-not">B slides the top half down without flipping it, so its diagonal ends up parallel to the other one. A moves the upright line to the left, which would happen only if the sheet were also flipped left to right. D turns the top half right round (a half turn), which lays its diagonal exactly on top of the other one.</p>`
+      },
+      {
+        stem: `Which shape does not belong with the other three?`,
+        visualOptions: true,
+        options: [oooOpt("rotate(270)"), oooOpt("scale(-1 1) rotate(180)"), oooOpt("rotate(90)"), oooOpt("rotate(180)")],
+        answer: 1,
+        skill: "telling a turned shape from a mirror image",
+        explain: `<p>Three of the shapes are the same shape turned round; one is a mirror image. Start at the shaded square and go clockwise round the four small squares. In A, C and D the order is always shaded square, dot, diagonal line, then the square with the bump. In B it goes shaded square, bump, diagonal line, dot. The order has been reversed, so B is a mirror image and no amount of turning will make it match the others.</p>
+                  <p class="why-not">Each of A, C and D faces a different way, so they can look different at first glance. Checking one direction round the shape is quicker and safer than trying to turn each one in your head.</p>`
+      },
+      {
+        stem: `<p class="quote" style="margin-top:0">At the wildlife park, the keepers feed the pelicans only in the afternoon. Every time the pelicans are fed, a bell is rung first.</p>
+               <p style="margin:10px 0 0"><em class="speaker">Mia:</em> “It’s ten o’clock in the morning, so the keepers won’t be feeding the pelicans right now.”</p>
+               <p style="margin:6px 0 0"><em class="speaker">Leo:</em> “The bell hasn’t rung at all today, so the pelicans haven’t been fed today.”</p>
+               <p style="margin:10px 0 0">If the information in the box is true, whose reasoning is correct?</p>`,
+        options: ["Mia only", "Leo only", "Both Mia and Leo", "Neither Mia nor Leo"],
+        answer: 2,
+        skill: "deciding whether a conclusion must follow",
+        explain: `<p>Mia uses the first rule: feeding happens only in the afternoon, so it can’t be happening at ten in the morning. She is correct. Leo uses the second rule: every feed has a bell first, so if there has been no bell, there can’t have been a feed. He is correct too.</p>
+                  <p class="why-not">Leo’s reasoning is the trap, because it sounds like the rule turned backwards. The backwards version would be “the bell rang, so the pelicans were fed”, and that would be wrong, since the bell might ring for other reasons. Leo reasons from <em>no bell</em> to <em>no feed</em>, which is safe.</p>`
+      }
+    ]
+  },
+  {
+    id: "maths",
+    name: "Mathematical Reasoning",
+    timeSeconds: 4 * 60,
+    intro: "Choose the one correct answer (A, B, C, D or E). No calculators.",
+    questions: [
+      {
+        stem: `When the puzzle below is completed, each row and each column will contain a correct number sentence.
+               <div class="figure">${PUZZLE}</div>
+               <p style="margin:0">What number does ★ represent?</p>`,
+        options: ["7", "10", "11", "15", "26"],
+        answer: 3,
+        skill: "working backwards through linked number sentences",
+        explain: `<p>Find the missing numbers in an order that works. Top row: 6 × ? = 24, so the missing number is 4. Middle column: 4 × ? = 20, so the next missing number is 5. Middle row: ? − 5 = 4, so the missing number is 9. First column: 6 + 9 = ★, so ★ is 15.</p>
+                  <p class="why-not">7 comes from working out the middle row as 5 − 4 = 1 instead of finding the number that 5 is taken away from. 26 comes from 20 − 4 = 16 in the middle column instead of 20 ÷ 4. 10 and 11 add 6 to the wrong missing number (4 or 5).</p>`
+      },
+      {
+        stem: `There is a repeating pattern in the grid below. Part of the pattern is hidden by spilled paint.
+               <div class="figure">${PATTERN_SVG}</div>
+               <p style="margin:0">Which shape is in position D4?</p>`,
+        visualOptions: true,
+        options: ORDER.map(shapeOpt),
+        answer: 1,
+        skill: "continuing a repeating pattern on a grid",
+        explain: `<p>The pattern is circle, triangle, square, star, heart, over and over, reading along each row and carrying straight on into the next. Row 1 ends with a circle, so row 2 starts with a triangle, and each row starts one shape later than the one above. Row 4 starts with a star (you can see it in A4), then a heart in B4, so C4 is a circle and D4 is a <b>triangle</b>.</p>
+                  <p class="why-not">The star is the trap: it is the 4th shape of the pattern, which is only right if every row starts again with a circle. The visible cells show that the rows don’t start again.</p>`
+      },
+      {
+        stem: `A baker cuts every cake into 8 equal slices. On Monday she sells 2¾ cakes, all as slices. On Tuesday she sells 19 slices.
+               <p style="margin:10px 0 0">How many slices does she sell altogether on the two days?</p>`,
+        options: ["22", "38", "39", "41", "43"],
+        answer: 3,
+        skill: "finding a fraction of a quantity in a two-step problem",
+        explain: `<p>First turn Monday’s cakes into slices. Two whole cakes are 2 × 8 = 16 slices. A quarter of a cake is 8 ÷ 4 = 2 slices, so three quarters is 6 slices. Monday is 16 + 6 = 22 slices. Add Tuesday’s 19: 22 + 19 = 41.</p>
+                  <p class="why-not">38 reads “¾” as 3 slices (16 + 3 = 19 on Monday). 39 treats three quarters as half a cake (4 slices). 43 rounds 2¾ cakes up to 3 whole cakes. 22 is Monday on its own.</p>`
+      }
+    ]
+  }
+];
+
+
+const LETTERS = ["A", "B", "C", "D", "E"];
+const app = document.getElementById("app");
+const hdrSection = document.getElementById("hdr-section");
+let responses = SECTIONS.map(s => s.questions.map(() => null));
+let current = 0;
+
+let timed = false, timerId = null;
+const timerEl = document.getElementById("timer");
+
+function showStart() {
+  hdrSection.textContent = "";
+  stopTimer();
+  app.innerHTML = `
+    <div class="sheet instructions">
+      <h1>Practice paper 10</h1>
+      <p class="lead">Three short sections: reading, thinking skills and maths.</p>
+      <div class="plan">
+        ${SECTIONS.map(s => `<div><strong>${s.name}</strong><span>${s.questions.length} questions · ${s.timeSeconds / 60} minutes if timed</span></div>`).join("")}
+      </div>
+      <ol>
+        <li>Choose how to work. <strong>Own pace</strong> has no clock. <strong>Test conditions</strong> gives each section about a minute per question, like the real test, and submits your answers when time runs out.</li>
+        <li>Answer all three questions in a section, then press <strong>Submit answers</strong> to see how you went.</li>
+        <li>You don’t lose marks for wrong answers, so attempt every question.</li>
+        <li>Your overall mark out of 9 is shown at the end.</li>
+      </ol>
+      <div class="start-buttons">
+        <button class="primary" id="start-timed">Start under test conditions</button>
+        <button class="secondary" id="start">Start at my own pace</button>
+      </div>
+    </div>`;
+  const begin = t => { timed = t; current = 0; responses = SECTIONS.map(s => s.questions.map(() => null)); showSection(); };
+  document.getElementById("start").onclick = () => begin(false);
+  document.getElementById("start-timed").onclick = () => begin(true);
+}
+
+function startTimer(seconds, onExpire) {
+  stopTimer();
+  let left = seconds;
+  timerEl.classList.remove("hidden", "low");
+  const tick = () => {
+    timerEl.textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, "0")}`;
+    timerEl.classList.toggle("low", left <= 30);
+    if (left <= 0) { stopTimer(); onExpire(); return; }
+    left--;
+  };
+  tick();
+  timerId = setInterval(tick, 1000);
+}
+function stopTimer() {
+  if (timerId) clearInterval(timerId);
+  timerId = null;
+  timerEl.classList.add("hidden");
+}
+
+function renderPassage(pass) {
+  return `<div class="passage">
+    <p class="passage-note">${pass.note}</p>
+    <div class="prose"><h3>${pass.title}</h3><div id="passage-body">${typeof pass.html === "function" ? pass.html() : pass.html}</div></div>
+  </div>`;
+}
+
+function refreshPassage() {
+  const pass = SECTIONS[current].passage;
+  const el = document.getElementById("passage-body");
+  if (el && pass && typeof pass.html === "function") el.innerHTML = pass.html();
+}
+
+function renderQuestions(section, mode) {
+  return section.questions.map((q, qi) => {
+    const chosen = responses[current][qi];
+    const opts = q.options.map((o, oi) => {
+      let cls = "option";
+      if (mode === "answer" && chosen === oi) cls += " selected";
+      if (mode === "review") {
+        if (oi === q.answer) cls += " is-correct";
+        else if (chosen === oi) cls += " is-wrong";
+      }
+      return `<button type="button" class="${cls}" data-q="${qi}" data-o="${oi}" ${mode === "review" ? "disabled" : ""}>
+                <span class="letter">${LETTERS[oi]}</span>${q.letterOptions ? "" : `<span>${o}</span>`}</button>`;
+    }).join("");
+    const optCls = q.visualOptions ? "options visual" : (q.letterOptions ? "options letters" : "options");
+    let result = "";
+    if (mode === "review") {
+      const right = chosen === q.answer;
+      const label = chosen === null ? "Not answered" : (right ? "Correct" : "Incorrect");
+      result = `<div class="result-line"><span class="badge ${right ? "ok" : "no"}">${label}</span>
+                <span>Correct answer: ${LETTERS[q.answer]}${chosen !== null && !right ? ` · You chose ${LETTERS[chosen]}` : ""}</span></div>`;
+    }
+    return `<div class="question">
+      <div class="qhead"><span class="qnum">${qi + 1}</span><div class="stem">${q.stem}</div></div>
+      ${result}
+      <div class="${optCls}">${opts}</div>
+      ${mode === "review" ? `<div class="explain">${q.skill ? `<p class="skill">Skill tested: ${q.skill}</p>` : ""}${q.explain}</div>` : ""}
+    </div>`;
+  }).join("");
+}
+
+function showSection() {
+  passMode = "answer";
+  const s = SECTIONS[current];
+  hdrSection.textContent = `${s.name} · Section ${current + 1} of ${SECTIONS.length}`;
+  const qs = `<div>
+      <h2>${s.name}</h2>
+      <p class="lead">${s.intro}</p>
+      ${s.preamble || ""}
+      ${renderQuestions(s, "answer")}
+      <div class="submit-row">
+        <button class="primary" id="submit">Submit answers</button>
+        <span class="status" id="status"></span>
+      </div>
+    </div>`;
+  app.innerHTML = `<div class="sheet">${s.passage ? `<div class="two-col">${renderPassage(s.passage)}${qs}</div>` : qs}</div>`;
+
+  app.querySelectorAll(".option").forEach(btn => {
+    btn.onclick = () => {
+      const qi = +btn.dataset.q, oi = +btn.dataset.o;
+      responses[current][qi] = oi;
+      app.querySelectorAll(`.option[data-q="${qi}"]`).forEach(b => b.classList.toggle("selected", +b.dataset.o === oi));
+      refreshPassage();
+      updateStatus();
+    };
+  });
+  document.getElementById("submit").onclick = () => {
+    const unanswered = responses[current].filter(r => r === null).length;
+    if (unanswered && !confirm(`You have ${unanswered} unanswered question${unanswered > 1 ? "s" : ""}. Submit anyway?`)) return;
+    showReview();
+  };
+  updateStatus();
+  if (timed) startTimer(s.timeSeconds, showReview);
+  window.scrollTo(0, 0);
+}
+
+function updateStatus() {
+  const done = responses[current].filter(r => r !== null).length;
+  const el = document.getElementById("status");
+  if (el) el.textContent = `${done} of ${SECTIONS[current].questions.length} answered`;
+}
+
+function sectionScore(i) {
+  return SECTIONS[i].questions.reduce((n, q, qi) => n + (responses[i][qi] === q.answer ? 1 : 0), 0);
+}
+
+function showReview() {
+  stopTimer();
+  passMode = "review";
+  const s = SECTIONS[current];
+  const score = sectionScore(current);
+  const last = current === SECTIONS.length - 1;
+  hdrSection.textContent = `${s.name} · Review`;
+  const body = `<div>
+      <h2>${s.name} — review</h2>
+      <p class="section-score">You scored <b>${score}</b> out of ${s.questions.length}</p>
+      ${s.preamble || ""}
+      ${renderQuestions(s, "review")}
+      <div class="submit-row">
+        <button class="primary" id="next">${last ? "See your overall mark" : `Start the ${SECTIONS[current + 1].name.split(" — ")[0].toLowerCase()} section`}</button>
+      </div>
+    </div>`;
+  app.innerHTML = `<div class="sheet">${s.passage ? `<div class="two-col">${renderPassage(s.passage)}${body}</div>` : body}</div>`;
+  document.getElementById("next").onclick = () => { if (last) showFinal(); else { current++; showSection(); } };
+  window.scrollTo(0, 0);
+}
+
+function showFinal() {
+  hdrSection.textContent = "Results";
+  const total = SECTIONS.reduce((n, _, i) => n + sectionScore(i), 0);
+  const max = SECTIONS.reduce((n, s) => n + s.questions.length, 0);
+  let verdict;
+  if (total === max) verdict = "Full marks. Every question right, across all three sections.";
+  else if (total >= 7) verdict = "A strong result. Look back at the questions you missed — the explanations show exactly where the trap was.";
+  else if (total >= 5) verdict = "A solid attempt. The sections where you dropped marks are the ones to practise next.";
+  else verdict = "A good start. Re-read the explanations for each section, then try the paper again.";
+  app.innerHTML = `
+    <div class="sheet">
+      <div class="final-score"><div class="big">${total}</div><div class="of">out of ${max}</div></div>
+      <div class="breakdown">
+        ${SECTIONS.map((s, i) => `<div><strong>${sectionScore(i)} / ${s.questions.length}</strong><span>${s.name}</span></div>`).join("")}
+      </div>
+      <p class="verdict center">${verdict}</p>
+      <div class="center"><button class="primary" id="again">Try the paper again</button></div>
+    </div>`;
+  document.getElementById("again").onclick = showStart;
+  window.scrollTo(0, 0);
+}
+
+
+showStart();
+</script>
+</body>
+</html>
